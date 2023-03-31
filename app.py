@@ -3,6 +3,7 @@ import logging
 from flask import Flask
 from flask_restful import Api
 
+from application import FlightsHandler
 from resources import FlightsDataResource
 
 logger = logging.getLogger("success_flights")
@@ -13,6 +14,8 @@ app = Flask(__name__)
 api = Api(app)
 
 # initializations
+flights_handler = FlightsHandler()
+
 api.add_resource(
     FlightsDataResource,
     '/flights',

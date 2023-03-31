@@ -1,0 +1,9 @@
+class FlightsHandler:
+    def __init__(self):
+        ...
+
+    def handle_get_flights(self) -> list:
+        ...
+
+    def handle_post_flights(self, flights: list):
+        ...
