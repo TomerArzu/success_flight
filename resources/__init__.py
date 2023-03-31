@@ -1,1 +1,1 @@
-from resources.flights_data import FlightsDataResource
+from resources.flights_resource import FlightsResource
