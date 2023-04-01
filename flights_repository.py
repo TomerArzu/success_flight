@@ -10,28 +10,28 @@ from const import time_format
 T = TypeVar("T")
 
 
-class CsvRepository(ABC):
+class Repository(ABC):
 
     @abstractmethod
-    def read_all(self) -> list[T]:
+    def read(self) -> list[T]:
         ...
 
     @abstractmethod
-    def read_line(self, line_id: T) -> Optional[T]:
+    def read_by_id(self, line_id: T) -> Optional[T]:
         ...
 
     @abstractmethod
-    def write_csv(self, data: list[T] | T) -> bool:
+    def write(self, data: list[T] | T) -> bool:
         ...
 
 
-class FlightsRepository(CsvRepository):
+class FlightsRepository(Repository):
     def __init__(self, path_to_file):
         self._path_to_file = path_to_file
         self._fieldnames = ["flight ID", "Arrival", "Departure", "success"]
 
-    def read_all(self) -> list[Flight]:
-        logger_instance.logger.debug("retrieving all data_and_mocks from csv...")
+    def read(self) -> list[Flight]:
+        logger_instance.logger.debug("retrieving all data from csv...")
         flights = []
 
         try:
@@ -50,7 +50,7 @@ class FlightsRepository(CsvRepository):
                     )
 
         except TypeError as te:
-            logger_instance.logger.debug("error occurred while retrieving flights data_and_mocks from csv")
+            logger_instance.logger.debug("error occurred while retrieving flights data from csv")
             logger_instance.logger.debug(te)
         except KeyError as ke:
             logger_instance.logger.debug("invalid field name, check csv format")
@@ -58,11 +58,11 @@ class FlightsRepository(CsvRepository):
 
         return flights
 
-    def read_line(self, line_id: Flight) -> Optional[Flight]:
+    def read_by_id(self, line_id: Flight) -> Optional[Flight]:
         pass
 
-    def write_csv(self, data: list[Flight] | Flight):
-        logger_instance.logger.debug("writing new data_and_mocks to csv file...")
+    def write(self, data: list[Flight] | Flight):
+        logger_instance.logger.debug("writing new data to csv file...")
 
         with open(self._path_to_file, mode='w', newline="\n") as csv_file:
             logger_instance.logger.debug(f"csv file opened {self._path_to_file}")
@@ -72,4 +72,4 @@ class FlightsRepository(CsvRepository):
             for line in data:
                 writer.writerow(line.as_serializable_dict())
 
-        logger_instance.logger.debug("new data_and_mocks has been saved !")
+        logger_instance.logger.debug("new data has been saved !")
