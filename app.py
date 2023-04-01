@@ -1,25 +1,37 @@
-import logging
-
 from flask import Flask
 from flask_restful import Api
 
-from resources import FlightsDataResource
+from application import FlightsHandler
+from flights_repository import FlightsRepository
+from resources import FlightsResource
+from services.success_flight_service import SuccessFlightService
 
-logger = logging.getLogger("success_flights")
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+from logger_instance import logger
 
 # Flask app
 app = Flask(__name__)
 api = Api(app)
 
 # initializations
+logger.debug("initialize flight success application...")
+
+flights_repository = FlightsRepository("data_and_mocks/airport_flight_data.csv")
+success_flight_service = SuccessFlightService()
+flights_handler = FlightsHandler(
+    flights_repository=flights_repository,
+    success_flight_service=success_flight_service
+)
+
+flights_handler.handle_init_flight_doc()
+
 api.add_resource(
-    FlightsDataResource,
+    FlightsResource,
     '/flights',
     resource_class_kwargs={
-        # TODO: add an handler for post and get functions
+        "handler": flights_handler
     }
 )
+logger.debug("success flights application ready to use")
 
 # run local
 if __name__ == "__main__":
