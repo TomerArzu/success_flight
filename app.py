@@ -17,7 +17,7 @@ api = Api(app)
 # initializations
 logger.debug("initialize flight success application...")
 
-flights_repository = FlightsRepository("data_and_mocks/airport_flight_data.csv")
+flights_repository = FlightsRepository("data_and_mocks/airport_flight_data1.csv")
 success_flight_service = SuccessFlightService()
 flights_handler = FlightsHandler(
     flights_repository=flights_repository,
