@@ -4,46 +4,41 @@ from datetime import datetime
 from typing import TypeVar, Optional
 
 import logger_instance
-from Domain.flight import Flight
+from domain.flight import Flight
 from const import time_format
 
 T = TypeVar("T")
 
 
 class CsvRepository(ABC):
-    # CRUD - CREATE, READ, UPDATE, DELETE
+
     @abstractmethod
-    def get_all(self) -> list[T]:
+    def read_all(self) -> list[T]:
         ...
 
     @abstractmethod
-    def get(self, row_id: T) -> Optional[T]:
+    def read_line(self, line_id: T) -> Optional[T]:
         ...
 
     @abstractmethod
-    def update_lines(self, data: list[T] | T) -> bool:
-        ...
-
-    @abstractmethod
-    def append_lines(self, data: list[T] | T) -> bool:
-        ...
-
-    @abstractmethod
-    def delete(self, data: T) -> bool:
+    def write_csv(self, data: list[T] | T) -> bool:
         ...
 
 
 class FlightsRepository(CsvRepository):
-    def __init__(self, full_path):
-        self._full_path = full_path
+    def __init__(self, path_to_file):
+        self._path_to_file = path_to_file
         self._fieldnames = ["flight ID", "Arrival", "Departure", "success"]
-        # self._file_cursor = None
 
-    def get_all(self) -> list[Flight]:
+    def read_all(self) -> list[Flight]:
+        logger_instance.logger.debug("retrieving all data_and_mocks from csv...")
         flights = []
+
         try:
-            with open(self._full_path, mode='r') as csv_file:
+            with open(self._path_to_file, mode='r') as csv_file:
+                logger_instance.logger.debug(f"csv file opened {self._path_to_file}")
                 csv_reader = csv.DictReader(csv_file, skipinitialspace=True)
+
                 for line in csv_reader:
                     flights.append(
                         Flight(
@@ -53,26 +48,28 @@ class FlightsRepository(CsvRepository):
                             success=line["success"],
                         )
                     )
+
         except TypeError as te:
+            logger_instance.logger.debug("error occurred while retrieving flights data_and_mocks from csv")
             logger_instance.logger.debug(te)
+        except KeyError as ke:
+            logger_instance.logger.debug("invalid field name, check csv format")
+            logger_instance.logger.debug(ke)
+
         return flights
 
-    def get(self, row_id: Flight) -> Optional[Flight]:
+    def read_line(self, line_id: Flight) -> Optional[Flight]:
         pass
 
     def write_csv(self, data: list[Flight] | Flight):
-        with open("airport_flight_data_filled_sorted.csv", mode='w', newline="\n") as csv_file:
+        logger_instance.logger.debug("writing new data_and_mocks to csv file...")
+
+        with open(self._path_to_file, mode='w', newline="\n") as csv_file:
+            logger_instance.logger.debug(f"csv file opened {self._path_to_file}")
             writer = csv.DictWriter(csv_file, fieldnames=self._fieldnames)
             writer.writeheader()
 
             for line in data:
-                writer.writerow(line)
+                writer.writerow(line.as_serializable_dict())
 
-    def update_lines(self, data: list[Flight] | Flight) -> bool:
-        pass
-
-    def append_lines(self, data: list[Flight] | Flight) -> bool:
-        pass
-
-    def delete(self, data: Flight) -> bool:
-        pass
+        logger_instance.logger.debug("new data_and_mocks has been saved !")

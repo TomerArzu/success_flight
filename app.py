@@ -4,19 +4,18 @@ from flask_restful import Api
 from application import FlightsHandler
 from flights_repository import FlightsRepository
 from resources import FlightsResource
-from logger_instance import logger
-
-
-# Flask app
 from services.success_flight_service import SuccessFlightService
 
+from logger_instance import logger
+
+# Flask app
 app = Flask(__name__)
 api = Api(app)
 
 # initializations
 logger.debug("initialize flight success application...")
 
-flights_repository = FlightsRepository("C:\\projects\\success_flight\\airport_flight_data.csv")
+flights_repository = FlightsRepository("data_and_mocks/airport_flight_data.csv")
 success_flight_service = SuccessFlightService()
 flights_handler = FlightsHandler(
     flights_repository=flights_repository,
@@ -32,6 +31,7 @@ api.add_resource(
         "handler": flights_handler
     }
 )
+logger.debug("success flights application ready to use")
 
 # run local
 if __name__ == "__main__":
