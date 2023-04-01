@@ -1,6 +1,7 @@
 flight ID,Arrival,Departure,success
 G86,07:30,14:00,success
 T01,07:45,08:30,fail
+T04,07:45,08:30,fail
 C23,08:00,17:00,success
 A21,08:00,13:00,success
 C26,08:00,17:00,success

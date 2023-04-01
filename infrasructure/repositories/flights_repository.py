@@ -6,6 +6,7 @@ from domain import Flight
 
 import logger_instance
 from const import time_format
+from exceptions import DataSourceNotFoundException, DataSourceParsingException, DataSourceLineHeadersException
 
 
 class FlightsRepository(Repository):
@@ -31,14 +32,16 @@ class FlightsRepository(Repository):
                             success=line["success"],
                         )
                     )
-
+        except FileNotFoundError as fnfe:
+            raise DataSourceNotFoundException(f"Could not find data source in the provided path `{self._path_to_file}`"
+                                              f", please check if data source exists", fnfe) from fnfe
         except TypeError as te:
-            logger_instance.logger.debug("error occurred while retrieving flights data from csv")
-            logger_instance.logger.debug(te)
+            raise DataSourceParsingException(f"Could not parse provided csv. "
+                                             f"During parsing, unexpected type of data was found", te) from te
         except KeyError as ke:
-            logger_instance.logger.debug("invalid field name, check csv format")
-            logger_instance.logger.debug(ke)
-
+            raise DataSourceLineHeadersException(f"Wrong field in csv file. "
+                                                 f"field name {ke.args[0]} is not one of defiled fields"
+                                                 f"Fields name must be: {self._path_to_file}", ke) from ke
         return flights
 
     def read_by_id(self, line_id: str) -> Flight | None:
@@ -58,25 +61,32 @@ class FlightsRepository(Repository):
                             departure=datetime.strptime(line["Departure"], time_format).time(),
                             success=line["success"],
                         )
-
+        except FileNotFoundError as fnfe:
+            raise DataSourceNotFoundException(f"Could not find data source in the provided path `{self._path_to_file}`"
+                                              f", please check if data source exists", fnfe) from fnfe
         except TypeError as te:
-            logger_instance.logger.debug("error occurred while retrieving flights data from csv")
-            logger_instance.logger.debug(te)
+            raise DataSourceParsingException(f"Could not parse provided csv. "
+                                             f"During parsing, unexpected type of data was found", te) from te
         except KeyError as ke:
-            logger_instance.logger.debug("invalid field name, check csv format")
-            logger_instance.logger.debug(ke)
+            raise DataSourceLineHeadersException(f"Wrong field in csv file. "
+                                                 f"field name {ke.args[0]} is not one of defiled fields"
+                                                 f"Fields name must be: {self._path_to_file}", ke) from ke
 
         return flight
 
     def write(self, data: list[Flight] | Flight):
         logger_instance.logger.debug("writing new data to csv file...")
 
-        with open(self._path_to_file, mode='w', newline="\n") as csv_file:
-            logger_instance.logger.debug(f"csv file opened {self._path_to_file}")
-            writer = csv.DictWriter(csv_file, fieldnames=self._fieldnames)
-            writer.writeheader()
+        try:
+            with open(self._path_to_file, mode='w', newline="\n") as csv_file:
+                logger_instance.logger.debug(f"csv file opened {self._path_to_file}")
+                writer = csv.DictWriter(csv_file, fieldnames=self._fieldnames)
+                writer.writeheader()
 
-            for line in data:
-                writer.writerow(line.as_serializable_dict())
-
-        logger_instance.logger.debug("new data has been saved !")
+                for line in data:
+                    writer.writerow(line.as_serializable_dict())
+                logger_instance.logger.debug("new data has been saved !")
+        except FileNotFoundError as fnfe:
+            raise DataSourceNotFoundException(
+                f"Could not find data source in the provided path `{self._path_to_file}`"
+                f", please check if data source exists", fnfe) from fnfe
