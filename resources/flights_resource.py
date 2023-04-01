@@ -1,7 +1,10 @@
+import json
+
 from flask_restful import Resource
 from flask import request
 
 from application import FlightsHandler
+from const import time_format
 from logger_instance import logger
 
 
@@ -14,7 +17,12 @@ class FlightsResource(Resource):
         logger.debug("GET /flights")
         flights = self._handler.handle_get_flights()
         response = {
-            "flights": flights
+            "flights": [{
+                "flight ID": flight.id,
+                "Arrival": flight.arrival.strftime(time_format),
+                "Departure": flight.departure.strftime(time_format),
+                "success": flight.success,
+            } for flight in flights]
         }
         return response
 
