@@ -3,7 +3,8 @@ from datetime import datetime
 from flask_restful import Resource
 from flask import request
 
-from domain.flight import Flight
+from domain import Flight
+
 from const import time_format
 from logger_instance import logger
 
@@ -16,7 +17,7 @@ class FlightResource(Resource):
         logger.debug("GET /flight/{flight_id}")
         flight = self._handler.handle_get_flight(flight_id)
         if flight is None:
-            return {"message": f"flight id: {flight_id} not found"}, 404
+            return {"message": f"flight id {flight_id} not found"}, 404
 
         return {"message": flight.as_serializable_dict()}, 200
 

@@ -1,12 +1,9 @@
-from domain.flight import Flight
-from flights_repository import Repository
+from application.services import success_flight_service
+from application.services.success_flight_service import SuccessFlightService
+from domain import Flight
+from domain import Repository
+
 from logger_instance import logger
-from services.success_flight_service import SuccessFlightService
-
-
-def _remove_outdated_flights(exists_flights, flights_to_update):
-    for flight in flights_to_update:
-        exists_flights.remove(flight)
 
 
 class FlightsHandler:
@@ -40,9 +37,9 @@ class FlightsHandler:
         sorted_flights, updated_flights = self._success_flight_service.calculate_success_flights(flights)
 
         exists_flights = self._flights_repository.read()
-        _remove_outdated_flights(exists_flights, updated_flights)
+        success_flight_service.remove_outdated_flights(exists_flights, updated_flights)
         all_flights = exists_flights + sorted_flights + updated_flights
-        new_flight_list = self._success_flight_service.sort_flights_by_arrival(all_flights)
+        new_flight_list = success_flight_service.sort_flights_by_arrival(all_flights)
 
         self._flights_repository.write(new_flight_list)
 

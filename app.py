@@ -2,10 +2,11 @@ from flask import Flask
 from flask_restful import Api
 
 from application import FlightsHandler
-from flights_repository import FlightsRepository
-from resources import FlightsResource
-from resources.flights_resource import FlightResource
-from services.success_flight_service import SuccessFlightService
+from application import SuccessFlightService
+
+from infrasructure.repositories.flights_repository import FlightsRepository
+from infrasructure.resources import FlightsResource
+from infrasructure.resources.flights_resource import FlightResource
 
 from logger_instance import logger
 

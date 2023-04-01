@@ -1,28 +1,11 @@
 import csv
-from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import TypeVar, Optional
+
+from domain import Repository
+from domain import Flight
 
 import logger_instance
-from domain.flight import Flight
 from const import time_format
-
-T = TypeVar("T")
-
-
-class Repository(ABC):
-
-    @abstractmethod
-    def read(self) -> list[T]:
-        ...
-
-    @abstractmethod
-    def read_by_id(self, line_id: T) -> T | None:
-        ...
-
-    @abstractmethod
-    def write(self, data: list[T] | T):
-        ...
 
 
 class FlightsRepository(Repository):
