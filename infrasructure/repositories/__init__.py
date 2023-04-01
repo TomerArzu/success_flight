@@ -1,0 +1,1 @@
+from infrasructure.repositories.flights_repository import FlightsRepository

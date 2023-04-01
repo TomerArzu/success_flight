@@ -1,8 +1,9 @@
 import bisect
 from datetime import datetime
 
+from domain import Flight
+
 import logger_instance
-from domain.flight import Flight
 from const import time_format, NUMBER_OF_SUCCESS_FLIGHTS_ALLOWED
 
 
@@ -19,6 +20,11 @@ def flight_duration_min(flight: Flight):
     diff_minutes = diff_seconds / 60
 
     return diff_minutes
+
+
+def remove_outdated_flights(exists_flights, flights_to_update):
+    for flight in flights_to_update:
+        exists_flights.remove(flight)
 
 
 class SuccessFlightService:
@@ -45,6 +51,7 @@ class SuccessFlightService:
                         extracted_flight = self._successful_flights.pop()
                         extracted_flight.success = 'fail'
                         flights_to_update.append(extracted_flight)
+
                         # keep the successful flight in the list with the size of NUMBER_OF_SUCCESS_FLIGHTS_ALLOWED
                         self._successful_flights = self._successful_flights[:expected_index_in_successful_flights] + [
                             flight] + self._successful_flights[expected_index_in_successful_flights:]

@@ -1,1 +1,0 @@
-from resources.flights_resource import FlightsResource
