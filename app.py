@@ -3,6 +3,7 @@ from flask_restful import Api
 
 from application import FlightsHandler
 from application import SuccessFlightService
+from const import DATA_SOURCE_LOCATION
 
 from infrasructure.repositories.flights_repository import FlightsRepository
 from infrasructure.resources import FlightsResource
@@ -17,7 +18,7 @@ api = Api(app)
 # initializations
 logger.debug("initialize flight success application...")
 
-flights_repository = FlightsRepository("data_and_mocks/airport_flight_data1.csv")
+flights_repository = FlightsRepository(DATA_SOURCE_LOCATION)
 success_flight_service = SuccessFlightService()
 flights_handler = FlightsHandler(
     flights_repository=flights_repository,
