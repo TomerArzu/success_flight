@@ -29,6 +29,12 @@ class FlightsHandler:
 
         return flights
 
+    def handle_get_flight(self, flight_id: str) -> Flight:
+        logger.debug("handle get flights")
+        flight = self._flights_repository.read_by_id(flight_id)
+
+        return flight
+
     def handle_post_flights(self, flights: list[Flight]):
         logger.debug("handle post flights")
         sorted_flights, updated_flights = self._success_flight_service.calculate_success_flights(flights)
