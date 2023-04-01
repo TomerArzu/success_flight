@@ -35,7 +35,7 @@ class FlightsRepository(Repository):
         except FileNotFoundError as fnfe:
             raise DataSourceNotFoundException(f"Could not find data source in the provided path `{self._path_to_file}`"
                                               f", please check if data source exists", fnfe) from fnfe
-        except TypeError as te:
+        except (ValueError, TypeError) as te:
             raise DataSourceParsingException(f"Could not parse provided csv. "
                                              f"During parsing, unexpected type of data was found", te) from te
         except KeyError as ke:
