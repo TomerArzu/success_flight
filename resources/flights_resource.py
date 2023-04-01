@@ -8,6 +8,19 @@ from const import time_format
 from logger_instance import logger
 
 
+class FlightResource(Resource):
+    def __init__(self, **kwargs):
+        self._handler = kwargs['handler']
+
+    def get(self, flight_id: str):
+        logger.debug("GET /flight/{flight_id}")
+        flight = self._handler.handle_get_flight(flight_id)
+        if flight is None:
+            return {"message": f"flight id: {flight_id} not found"}, 404
+
+        return {"message": flight.as_serializable_dict()}, 200
+
+
 class FlightsResource(Resource):
     def __init__(self, **kwargs):
         self._handler = kwargs['handler']
@@ -15,6 +28,8 @@ class FlightsResource(Resource):
     def get(self):
         logger.debug("GET /flights")
         flights = self._handler.handle_get_flights()
+        if not flights:
+            return {"message": f"there are no flights in CSV"}, 404
 
         response = {
             "flights": [flight.as_serializable_dict() for flight in flights]

@@ -17,11 +17,11 @@ class Repository(ABC):
         ...
 
     @abstractmethod
-    def read_by_id(self, line_id: T) -> Optional[T]:
+    def read_by_id(self, line_id: T) -> T | None:
         ...
 
     @abstractmethod
-    def write(self, data: list[T] | T) -> bool:
+    def write(self, data: list[T] | T):
         ...
 
 
@@ -58,8 +58,32 @@ class FlightsRepository(Repository):
 
         return flights
 
-    def read_by_id(self, line_id: Flight) -> Optional[Flight]:
-        pass
+    def read_by_id(self, line_id: str) -> Flight | None:
+        logger_instance.logger.debug(f"retrieving flight {line_id} data from csv...")
+        flight = None
+
+        try:
+            with open(self._path_to_file, mode='r') as csv_file:
+                logger_instance.logger.debug(f"csv file opened {self._path_to_file}")
+                csv_reader = csv.DictReader(csv_file, skipinitialspace=True)
+
+                for line in csv_reader:
+                    if line["flight ID"] == line_id:
+                        flight = Flight(
+                            id=line["flight ID"],
+                            arrival=datetime.strptime(line["Arrival"], time_format).time(),
+                            departure=datetime.strptime(line["Departure"], time_format).time(),
+                            success=line["success"],
+                        )
+
+        except TypeError as te:
+            logger_instance.logger.debug("error occurred while retrieving flights data from csv")
+            logger_instance.logger.debug(te)
+        except KeyError as ke:
+            logger_instance.logger.debug("invalid field name, check csv format")
+            logger_instance.logger.debug(ke)
+
+        return flight
 
     def write(self, data: list[Flight] | Flight):
         logger_instance.logger.debug("writing new data to csv file...")

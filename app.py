@@ -4,6 +4,7 @@ from flask_restful import Api
 from application import FlightsHandler
 from flights_repository import FlightsRepository
 from resources import FlightsResource
+from resources.flights_resource import FlightResource
 from services.success_flight_service import SuccessFlightService
 
 from logger_instance import logger
@@ -27,6 +28,13 @@ flights_handler.handle_init_flight_doc()
 api.add_resource(
     FlightsResource,
     '/flights',
+    resource_class_kwargs={
+        "handler": flights_handler
+    }
+)
+api.add_resource(
+    FlightResource,
+    '/flight/<string:flight_id>',
     resource_class_kwargs={
         "handler": flights_handler
     }
