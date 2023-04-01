@@ -141,7 +141,7 @@
       "status_code": 404,
       "error_message": "Flight Data was not found"
     }
-       ```
+    ```
 
 * example of `DATA_SOURCE_ERROR.FILE_NOT_FOUND` error:
 
@@ -151,7 +151,7 @@
       "status_code": 409,
       "error_message": "Could not find data source in the provided path `data_and_mocks/airport_flight_data1.csv`, please check if data source exists"
     }
-       ```
+    ```
 
 * example of `DATA_SOURCE_FORMAT_ERROR.UNEXPECTED_LINE_HEADER` error:
 
