@@ -1,7 +1,7 @@
 # Success Flight Application
 * Success Flight application's input is csv file that you can find in this repository under `data_and_mocks\airport_flight_data.csv`
 * The csv contains data about flight from some airport.
-* The airport cannot contain 20 successful flights
+* The airport cannot contain more than 20 successful flights
 * Flight is 'success' if the difference between arrival and departure time is equal or grater then 3 hours and if there is no more then 20 successful flights ordered by arrival time.
 * The application knows to receive the csv, parse it and calculate if flight is 'success'.
 * In the initialization time of the application, it orders the existing data and defines flight that are 'success'.
@@ -20,7 +20,7 @@
     2. create and activate python virtual env
     3. make sure port 5002 is available
     4. run `app.py` with python command `python app.py`
-    5. use `localhost:5000` as base url
+    5. use `localhost:5002` as base url
 
 2. run in docker image.
     1. clone project
